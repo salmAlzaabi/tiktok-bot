@@ -3,11 +3,11 @@ import requests
 from flask import Flask
 from threading import Thread
 
-# --- جزء السيرفر الوهمي لإرضاء Koyeb ---
+# سيرفر وهمي صغير لإقناع Koyeb أن البوت "موقع ويب" شغال
 app = Flask('')
 @app.route('/')
 def home():
-    return "I am alive!"
+    return "Bot is running!"
 
 def run():
     app.run(host='0.0.0.0', port=8000)
@@ -15,8 +15,8 @@ def run():
 def keep_alive():
     t = Thread(target=run)
     t.start()
-# --------------------------------------
 
+# --- إعدادات البوت ---
 API_TOKEN = '8463740745:AAEywm4g4XHrOXOR7mSqrsN2WFduL6Sog6Q'
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -32,11 +32,10 @@ def handle_tiktok(message):
         response = requests.get(api_url).json()
         if response.get('code') == 0:
             video_url = response['data']['play']
-            bot.send_video(message.chat.id, video_url)
+            bot.send_video(message.chat.id, video_url, caption="تم التحميل بدون علامة مائية ✅")
     except:
-        bot.reply_to(message, "حدث خطأ في التحميل.")
+        bot.reply_to(message, "حدث خطأ أثناء جلب الفيديو.")
 
 if __name__ == "__main__":
-    keep_alive() # تشغيل السيرفر الوهمي
-    print("البوت بدأ العمل...")
+    keep_alive() # تشغيل السيرفر الوهمي في الخلفية
     bot.infinity_polling()
